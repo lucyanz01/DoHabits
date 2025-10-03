@@ -27,3 +27,8 @@ class Objetivo:
             return 0
         tareas_completadas = sum(tarea.completadas for tarea in self.tareas)
         return round((tareas_completadas / len(self.tareas) * 100, 2))
+    
+    def __str__(self):
+        return f"{self.nombre - self.progreso()}% completado"
+    
+    
