@@ -27,7 +27,7 @@ class Objetivo:
         if not self.tareas:
             return 0
         tareas_completadas = sum(tarea.completada for tarea in self.tareas)
-        return round((tareas_completadas / len(self.tareas) * 100, 2))
+        return round(tareas_completadas / len(self.tareas) * 100, 2)
     
     def __str__(self):
         return f"{self.nombre} - {self.progreso()}% completado"
@@ -46,3 +46,21 @@ class Tarea:
     def __str__(self):
         estado = "✔" if self.completada else "✘"
         return f"{self.nombre} [{estado}]"
+    
+def main():
+    usuario = Usuario("Lucy")
+
+    usuario.crear_objetivo("Tareas de la noche")
+
+    usuario.objetivos[0].agregar_tarea("Cocinar la cena")
+    usuario.objetivos[0].agregar_tarea("Acomodar la cama")
+
+    usuario.objetivos[0].tareas[0].marcar_completada()
+
+    print(usuario.objetivos[0])
+
+    for tarea in usuario.objetivos[0].tareas:
+        print(tarea)
+
+if __name__ == "__main__":
+    main()
