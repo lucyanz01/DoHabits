@@ -23,6 +23,12 @@ class Objetivo:
         nueva_tarea = Tarea(nombre_tarea)
         self.tareas.append(nueva_tarea)
 
+    def eliminar_tarea(self, nombre_tarea):
+        tareas_cantidad = len(self.tareas)
+        self.tareas = [t for t in self.tareas if t.nombre != nombre_tarea]
+        if len(self.tareas) == tareas_cantidad:
+            print(f"No se encontró la tarea '{nombre_tarea}'")
+
     def progreso(self):
         if not self.tareas:
             return 0
