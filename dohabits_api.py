@@ -3,18 +3,28 @@ from dohabits import Usuario, Objetivo, Tarea
 
 app = Flask(__name__)
 
-usuarios = {} # Diccionario global de usuarios
+nombres_user = {} # Diccionario global de usuarios
 
 @app.route("/")
 def home():
-    return render_template("")
+    return jsonify({"mensaje": "API activa"})
 
-@app.route("/usuarios/iniciar", methods=["POST"])
-def iniciar_usuario():
+@app.route("/usuario", methods=["POST"])
+def crear_usuario():
     data = request.json
     nombre = data["nombre"]
 
-    if nombre not in usuarios:
-        usuarios[nombre] = Usuario(nombre)
+    if nombre not in nombres_user:
+        nombres_user[nombre] = Usuario(nombre)
 
     return jsonify({"mensaje": f"Usuario {nombre} iniciado"})
+
+@app.route("/usuarios/<nombre>/objetivos", methods=["POST"])
+def crear_objetivos(nombre):
+    data = request.json
+    nombre_obj = data["nombre_obj"]
+
+    if nombre in nombres_user:
+        nombres_user[nombre].crear_objetivo(nombre_obj)
+        return jsonify({"mensaje": f"Objetivo: '{nombre_obj}' creado."})
+    return jsonify ({"error": "usuario no existe"}), 404
