@@ -1,33 +1,34 @@
 # Lógica principal de mi app
 
 class Usuario:
-    def __init__(self, nombre):
-        self.nombre = nombre
+    def __init__(self, username):
+        self.nombre = username
         self.objetivos = []
 
     # Funciones del usuario
 
-    def crear_objetivo(self, nombre_objetivo):
-        nuevo_obj = Objetivo(nombre_objetivo)
-        self.objetivos.append(nuevo_obj)
+    def crear_objetivo(self, titulo_objetivo):
+        nuevo_objetivo = Objetivo(titulo_objetivo)
+        self.objetivos.append(nuevo_objetivo)
 
-    def eliminar_objetivo(self, nombre_objetivo):
-        self.objetivos = [o for o in self.objetivos if o.nombre != nombre_objetivo]
+    def eliminar_objetivo(self, titulo_objetivo):
+        self.objetivos = [o for o in self.objetivos if o.titulo != titulo_objetivo]
+        
 
 class Objetivo:
-    def __init__(self, nombre):
-        self.nombre = nombre
+    def __init__(self, titulo):
+        self.titulo = titulo
         self.tareas = []
 
-    def agregar_tarea(self, nombre_tarea):
-        nueva_tarea = Tarea(nombre_tarea)
+    def agregar_tarea(self, descripcion_tarea):
+        nueva_tarea = Tarea(descripcion_tarea)
         self.tareas.append(nueva_tarea)
 
-    def eliminar_tarea(self, nombre_tarea):
+    def eliminar_tarea(self, descripcion_tarea):
         tareas_cantidad = len(self.tareas)
-        self.tareas = [t for t in self.tareas if t.nombre != nombre_tarea]
+        self.tareas = [t for t in self.tareas if t.descripcion != descripcion_tarea]
         if len(self.tareas) == tareas_cantidad:
-            print(f"No se encontró la tarea '{nombre_tarea}'")
+            print(f"No se encontró la tarea '{descripcion_tarea}'")
 
     def progreso(self):
         if not self.tareas:
@@ -36,11 +37,11 @@ class Objetivo:
         return round(tareas_completadas / len(self.tareas) * 100, 2)
     
     def __str__(self):
-        return f"{self.nombre} - {self.progreso()}% completado"
+        return f"{self.titulo} - {self.progreso()}% completado"
 
 class Tarea:
-    def __init__(self, nombre):
-        self.nombre = nombre
+    def __init__(self, descripcion):
+        self.descripcion = descripcion
         self.completada = False
 
     def marcar_completada(self):
@@ -51,7 +52,7 @@ class Tarea:
 
     def __str__(self):
         estado = "✔" if self.completada else "✘"
-        return f"{self.nombre} [{estado}]"
+        return f"{self.descripcion} [{estado}]"
     
 def main():
     usuario = Usuario("Lucy")
