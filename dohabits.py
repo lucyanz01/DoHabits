@@ -8,6 +8,9 @@ class Usuario:
     # Funciones del usuario
 
     def crear_objetivo(self, titulo_objetivo):
+        if any(o.titulo == titulo_objetivo for o in self.objetivos):
+            print(f"El objetivo {titulo_objetivo} ya existe. Ingresa un nuevo objetivo.")
+            return
         nuevo_objetivo = Objetivo(titulo_objetivo)
         self.objetivos.append(nuevo_objetivo)
 
@@ -21,6 +24,9 @@ class Objetivo:
         self.tareas = []
 
     def agregar_tarea(self, descripcion_tarea):
+        if any(t.descripcion == descripcion_tarea for t in self.tareas):
+            print(f"La tarea {descripcion_tarea} ya existe. Ingresa una nueva tarea.")
+            return
         nueva_tarea = Tarea(descripcion_tarea)
         self.tareas.append(nueva_tarea)
 
