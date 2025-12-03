@@ -7,7 +7,7 @@ class Usuario(Base):
     __tablename__ = "usuarios"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    username = Column(String(50), nullable=False)
+    username = Column("nombre", String(50), nullable=False)
     password = Column(String(255), nullable=False)
 
     objetivos = relationship("Objetivo", back_populates="usuario")
