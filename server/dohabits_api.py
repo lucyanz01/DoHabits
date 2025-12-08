@@ -2,6 +2,14 @@ from flask import Flask, request, jsonify
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from models import Base, Usuario, Objetivo, Tarea
+from services import (
+    crear_usuario,
+    obtener_usuario,
+    crear_objetivo,
+    obtener_objetivos,
+    crear_tarea,
+    obtener_tareas
+)
 from dotenv import load_dotenv
 import os
 
@@ -15,21 +23,19 @@ session = Session()
 
 @app.route("/")
 def home():
-    return "Funcionando"
+    return "API funcionando"
+
+# Usuarios 
 
 @app.route("/usuarios", methods = ["POST"])
-def crear_usuario():
+def api_crear_usuario():
     data = request.get_json()
+    respuesta, status = crear_usuario(session, data.get("username"), data.get("password"))
+    return jsonify(respuesta), status
 
-    if "username" not in data or "password" not in data:
-        return jsonify({"error": "Faltan nombre de usuario o contraseña"}), 400
-    
-    nuevo_usuario = Usuario(
-        username = data["username"],
-        password = data["password"]
-    )
+@app.route("/objetivos/<int:usuario_id>", methods=["GET"])
+def api_obtener_objetivos(usuario_id):
+    respuesta, status = obtener_objetivos(session, usuario_id)
+    return jsonify(respuesta), status
 
-    session.add(nuevo_usuario)
-    session.commit()
-    
-    return jsonify({"mensaje": "Usuario creado", "id": nuevo_usuario.id}), 201
+# Objetivos 
