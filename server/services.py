@@ -16,7 +16,7 @@ def obtener_usuario(session:Session, usuario_id: int):
     if not usuario:
         return {"error": "Usuario no encontrado"},  404
 
-def crear_objetivo(session, usuario_id, titulo):
+def crear_objetivo(session:Session, usuario_id:int, titulo:str):
     existe = session.query(Objetivo).filter_by(usuario_id=usuario_id, titulo=titulo).first()
     if existe:
         return {"error": "El objetivo ya existe"}, 400
@@ -40,3 +40,28 @@ def obtener_objetivos(session:Session, usuario_id:int):
         })
 
     return {"objetivos": resultado}, 200
+
+def crear_tarea(session:Session, objetivo_id:int, descripcion:str):
+    existe = session.query(Tarea).filter_by(objetivo_id=objetivo_id, descripcion=descripcion).first()
+    if existe:
+        return {"error": "La tarea ya existe"}, 400
+    
+    tarea = Tarea(descripcion=descripcion, objetivo_id=objetivo_id)
+    session.add(tarea)
+    session.commit()
+    return {"mensaje": "Tarea creada con éxito"}, 201
+
+def obtener_tareas(session:Session, objetivo_id:int):
+    tareas = session.query(Tarea).filter_by(objetivo_id=objetivo_id).all()
+    if not tareas:
+        return {"error": "No hay tareas creadas"}, 404
+    
+    resultado = []
+    for t in tareas:
+        resultado.append({
+            "id": t.id,
+            "descripcion": t.descripcion,
+            "completada": t.completada
+        })
+
+    return {"tareas": resultado}, 200
