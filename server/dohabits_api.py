@@ -49,9 +49,26 @@ def api_crear_objetivo():
     data = request.get_json()
     respuesta, status = crear_objetivo(
         session,
-        data.get("usuario_id"),   # ESTO ERA OBLIGATORIO
+        data.get("usuario_id"),   # obligatorio
         data.get("titulo")
     )
     return jsonify(respuesta), status
 
 # Tareas
+
+@app.route("/tareas", methods=["POST"])
+def api_crear_tarea():
+    data = request.get_json()
+    respuesta, status = crear_tarea(
+        session,
+        data.get("objetivo_id"),
+        data.get("descripcion") # nombre
+        
+    )
+    return jsonify(respuesta), status
+
+
+@app.route("/tareas/<int:objetivo_id>", methods=["GET"])
+def api_obtener_tareas(objetivo_id):
+    respuesta, status = obtener_tareas(session, objetivo_id)
+    return jsonify(respuesta), status
