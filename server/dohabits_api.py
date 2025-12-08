@@ -54,6 +54,11 @@ def api_crear_objetivo():
     )
     return jsonify(respuesta), status
 
+@app.route("/objetivos/<int:usuario_id>", methods=["GET"])
+def api_obtener_objetivos(usuario_id):
+    respuesta, status = obtener_objetivos(session, usuario_id)
+    return jsonify(respuesta), status
+
 # Tareas
 
 @app.route("/tareas", methods=["POST"])
@@ -63,7 +68,6 @@ def api_crear_tarea():
         session,
         data.get("objetivo_id"),
         data.get("descripcion") # nombre
-        
     )
     return jsonify(respuesta), status
 
