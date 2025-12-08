@@ -15,6 +15,10 @@ def obtener_usuario(session:Session, usuario_id: int):
     usuario = session.get(Usuario, usuario_id)
     if not usuario:
         return {"error": "Usuario no encontrado"},  404
+    return {
+        "id": usuario.id,
+        "username": usuario.username
+    }, 200
 
 def crear_objetivo(session:Session, usuario_id:int, titulo:str):
     existe = session.query(Objetivo).filter_by(usuario_id=usuario_id, titulo=titulo).first()
@@ -49,7 +53,7 @@ def crear_tarea(session:Session, objetivo_id:int, descripcion:str):
     tarea = Tarea(descripcion=descripcion, objetivo_id=objetivo_id)
     session.add(tarea)
     session.commit()
-    return {"mensaje": "Tarea creada con éxito"}, 201
+    return {"mensaje": "Tarea creada con éxito", "id": tarea.id}, 201
 
 def obtener_tareas(session:Session, objetivo_id:int):
     tareas = session.query(Tarea).filter_by(objetivo_id=objetivo_id).all()
