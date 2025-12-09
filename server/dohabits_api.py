@@ -76,3 +76,6 @@ def api_crear_tarea():
 def api_obtener_tareas(objetivo_id):
     respuesta, status = obtener_tareas(session, objetivo_id)
     return jsonify(respuesta), status
+
+if __name__ == "__main__":
+    app.run(debug=True)
