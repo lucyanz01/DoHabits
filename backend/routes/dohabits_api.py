@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from models import Base, Usuario, Objetivo, Tarea
-from services import (
+from services.services import (
     crear_usuario,
     obtener_usuario,
     crear_objetivo,
