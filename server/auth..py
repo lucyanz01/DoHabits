@@ -3,6 +3,8 @@ import os
 from datetime import datetime, timedelta, timezone
 from flask import jsonify, request, Blueprint, current_app
 from functools import wraps
+from config import session
+from models import Usuario
 
 SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = "HS256"
@@ -50,3 +52,23 @@ def token_required(f):
         
         return f(*args, **kwargs)
     return decorated
+
+@bp.route("/login", methods=["POST"])
+def login():
+    data = request.get_json()
+    if not data:
+        return jsonify({"error": "cuerpo de solicitud vacio"}), 400
+    
+    username = data.get("username")
+    password = data.get("password")
+    
+    if not username or not password: 
+        return jsonify({"error": "datos faltantes"}), 400
+        
+    usuario = session.query(Usuario).filter_by(username=username).first()
+
+    if not usuario or usuario.password != password:
+        return jsonify({"errror": "credenciales inválidas"}), 401
+    
+    token = crear_token(usuario.id)
+    return jsonify({"token": token}), 200
