@@ -27,3 +27,26 @@ def crear_token(usuario_id):
 
     return token
 
+def token_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        auth_header = request.headers.get("Authorization")
+
+        if not auth_header:
+            return jsonify({"error":"token requerido"}), 401
+
+        try:
+            token = auth_header.split(" ")[1]
+            payload = jwt.decode(
+                token,
+                SECRET_KEY,
+                algorithms=[ALGORITHM]
+            )
+            request.user_id = payload["sub"]
+        except jwt.ExpiredSignatureError:
+            return jsonify({"error":"token expirado"}), 401
+        except jwt.InvalidTokenError:
+            return jsonify({"error":"token inválido"}), 401
+        
+        return f(*args, **kwargs)
+    return decorated
