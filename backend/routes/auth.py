@@ -5,6 +5,7 @@ from flask import jsonify, request, Blueprint, current_app
 from functools import wraps
 from config import session
 from models import Usuario
+from backend.utils.security import verify_password
 
 SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = "HS256"
@@ -67,8 +68,8 @@ def login():
         
     usuario = session.query(Usuario).filter_by(username=username).first()
 
-    if not usuario or usuario.password != password:
-        return jsonify({"errror": "credenciales inválidas"}), 401
+    if not usuario or not verify_password(password, usuario.password):
+        return jsonify({"error": "credenciales inválidas"}), 401
     
     token = crear_token(usuario.id)
     return jsonify({"token": token}), 200
