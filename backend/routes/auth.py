@@ -1,6 +1,5 @@
 import jwt 
 import os
-from dotenv import load_dotenv
 from datetime import datetime, timedelta, timezone
 from flask import jsonify, request, Blueprint, current_app
 from functools import wraps
@@ -9,7 +8,6 @@ from models import Usuario
 from backend.utils.security import verify_password
 from backend.services.usuarios import crear_usuario
 
-load_dotenv()
 SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = "HS256"
 
