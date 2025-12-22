@@ -1,81 +1,31 @@
-from flask import Flask, request, jsonify
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-from models import Base, Usuario, Objetivo, Tarea
-from services.services import (
-    crear_usuario,
-    obtener_usuario,
-    crear_objetivo,
-    obtener_objetivos,
-    crear_tarea,
-    obtener_tareas
-)
-from dotenv import load_dotenv
-import os
+from flask import Blueprint, request, jsonify
+from config import session
+from backend.routes.auth import token_required
+from backend.services.objetivos import crear_objetivo, obtener_objetivos
+from backend.services.tareas import crear_tarea, obtener_tareas
 
-app = Flask(__name__)
+bp_api = Blueprint("api", __name__)
 
-load_dotenv()
+@bp_api.route("/objetivos", methods=["GET", "POST"])
+@token_required
+def manejar_objetivos():
+    user_id = request.user_id
+    if request.method == "GET":
+        resultado, status = obtener_objetivos(session, user_id)
+        return jsonify(resultado), status
 
-engine = create_engine(os.getenv("DATABASE_URL"))
-Session = sessionmaker(bind=engine)
-session = Session()
-
-@app.route("/")
-def home():
-    return "API funcionando"
-
-# Usuarios 
-
-@app.route("/usuarios", methods = ["POST"])
-def api_crear_usuario():
     data = request.get_json()
-    respuesta, status = crear_usuario(
-        session,
-        data.get("username"),
-        data.get("password")
-        )
-    return jsonify(respuesta), status
+    resultado, status = crear_objetivo(session, user_id, data.get("titulo"))
+    return jsonify(resultado), status
 
-@app.route("/usuarios/<int:usuario_id>", methods=["GET"])
-def api_obtener_usuario(usuario_id):
-    respuesta, status = obtener_usuario(session, usuario_id)
-    return jsonify(respuesta), status
+@bp_api.route("/objetivos/<int:obj_id>/tareas", methods=["GET", "POST"])
+@token_required
+def manejar_tareas(obj_id):
+    user_id = request.user_id
+    if request.method == "GET":
+        resultado, status = obtener_tareas(session, user_id, obj_id)
+        return jsonify(resultado), status
 
-# Objetivos 
-
-@app.route("/objetivos", methods=["POST"])
-def api_crear_objetivo():
     data = request.get_json()
-    respuesta, status = crear_objetivo(
-        session,
-        data.get("usuario_id"),   # obligatorio
-        data.get("titulo")
-    )
-    return jsonify(respuesta), status
-
-@app.route("/objetivos/<int:usuario_id>", methods=["GET"])
-def api_obtener_objetivos(usuario_id):
-    respuesta, status = obtener_objetivos(session, usuario_id)
-    return jsonify(respuesta), status
-
-# Tareas
-
-@app.route("/tareas", methods=["POST"])
-def api_crear_tarea():
-    data = request.get_json()
-    respuesta, status = crear_tarea(
-        session,
-        data.get("objetivo_id"),
-        data.get("descripcion") # nombre
-    )
-    return jsonify(respuesta), status
-
-
-@app.route("/tareas/<int:objetivo_id>", methods=["GET"])
-def api_obtener_tareas(objetivo_id):
-    respuesta, status = obtener_tareas(session, objetivo_id)
-    return jsonify(respuesta), status
-
-if __name__ == "__main__":
-    app.run(debug=True)
+    resultado, status = crear_tarea(session, data.get("descripcion"), user_id, obj_id)
+    return jsonify(resultado), status
