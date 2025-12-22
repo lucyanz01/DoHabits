@@ -7,6 +7,7 @@ from functools import wraps
 from config import session
 from models import Usuario
 from backend.utils.security import verify_password
+from backend.services.usuarios import crear_usuario
 
 load_dotenv()
 SECRET_KEY = os.getenv("SECRET_KEY")
@@ -75,3 +76,19 @@ def login():
     
     token = crear_token(usuario.id)
     return jsonify({"token": token}), 200
+
+@bp.route("/usuarios", methods=["POST"])
+def register():
+    data = request.get_json()
+    if not data:
+        return jsonify({"error": "cuerpo de solicitud vacio"}), 400
+    
+    username = data.get("username")
+    password = data.get("password")
+
+    if not username or not password:
+        return jsonify({"error": "datos faltantes"})
+    
+    resultado, status = crear_usuario(session, username, password)
+
+    return jsonify(resultado), status

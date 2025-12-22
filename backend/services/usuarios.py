@@ -1,6 +1,6 @@
 from models import Usuario
 from sqlalchemy.orm import Session
-from utils.security import password_hash
+from backend.utils.security import password_hash
 
 
 def crear_usuario(session: Session, username: str, password: str):
