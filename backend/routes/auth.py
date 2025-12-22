@@ -18,7 +18,7 @@ bp = Blueprint("auth", __name__)
 
 def crear_token(usuario_id):
     payload = {
-        "sub": usuario_id,
+        "sub": str(usuario_id),
         "iat": datetime.now(timezone.utc),
         "exp": datetime.now(timezone.utc) + timedelta(hours=24)
     }
@@ -40,7 +40,7 @@ def token_required(f):
             return jsonify({"error":"token requerido"}), 401
 
         try:
-            token = auth_header.split(" ")[1]
+            token = auth_header.replace("Bearer", "").strip()
             payload = jwt.decode(
                 token,
                 SECRET_KEY,
